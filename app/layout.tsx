@@ -1,5 +1,3 @@
-
-import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 export interface AuthContextProps {
@@ -18,13 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <SessionProvider refetchOnWindowFocus={false}>
-          <>{children}</>
-        </SessionProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
-
-
