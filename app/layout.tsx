@@ -1,5 +1,6 @@
-import "./globals.css";
 
+import { SessionProvider } from "next-auth/react";
+import "./globals.css";
 
 export interface AuthContextProps {
   children: React.ReactNode;
@@ -10,7 +11,6 @@ export const metadata = {
   description: "An expense tracker for your daily expenses",
 };
 
-
 export default function RootLayout({
   children,
 }: {
@@ -19,7 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Session{children}</body>
+        <SessionProvider refetchOnWindowFocus={false}>
+          <>{children}</>
+        </SessionProvider>
+      </body>
     </html>
   );
 }
+
+
