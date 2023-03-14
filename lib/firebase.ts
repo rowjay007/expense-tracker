@@ -1,3 +1,4 @@
+import firebaseConfig from "@/config/firebaseConfig";
 import { useState, useEffect } from "react";
 import { initializeApp, getApps, getApp } from "firebase/app";
 import {
@@ -8,7 +9,6 @@ import {
   Auth,
   User,
 } from "firebase/auth";
-import { firebaseConfig } from "@/config/firebaseConfig";
 
 interface Firebase {
   registerUser: (email: string, password: string) => Promise<void>;
