@@ -34,7 +34,12 @@ export default function LoginModal() {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>Login</button>
+      <button
+        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md"
+        onClick={() => setIsOpen(true)}
+      >
+        Login
+      </button>
       {isOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-8">

@@ -19,8 +19,10 @@ export default function UserModal() {
         </div>
       ) : (
         <>
-          <LoginModal />
-          <RegisterModal />
+          <div className="flex justify-center items-center flex-col md:flex-row gap-2">
+            <LoginModal />
+            <RegisterModal />
+          </div>
         </>
       )}
     </>
