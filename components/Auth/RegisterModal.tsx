@@ -4,10 +4,13 @@ import { useForm } from "react-hook-form";
 import { auth } from "@/utils/firebase";
 import { userState } from "@/utils/state";
 import { FaTimes } from "react-icons/fa";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 
 type RegisterFormValues = {
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 export default function RegisterModal() {
@@ -19,18 +22,20 @@ export default function RegisterModal() {
     formState: { errors },
   } = useForm<RegisterFormValues>();
 
-  const handleRegister = async (data: RegisterFormValues) => {
-    try {
-      const { user } = await auth.createUserWithEmailAndPassword(
-        data.email,
-        data.password
-      );
-      setUser(user);
-      setIsOpen(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+ const handleRegister = async (data: RegisterFormValues) => {
+   try {
+     const { user } = await createUserWithEmailAndPassword(
+       auth,
+       data.email,
+       data.password
+     );
+     setUser(user);
+     setIsOpen(false);
+   } catch (error) {
+     console.error(error);
+   }
+ };
+
 
   return (
     <>
@@ -72,6 +77,20 @@ export default function RegisterModal() {
                 />
                 {errors.password && (
                   <span className="text-red-500">Password is required</span>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  {...register("confirmPassword", { required: true })}
+                  className="border border-gray-400 rounded-lg p-2 w-full"
+                />
+                {errors.confirmPassword && (
+                  <span className="text-red-500">
+                    Confirm Password is required
+                  </span>
                 )}
               </div>
               <button

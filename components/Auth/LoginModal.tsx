@@ -4,11 +4,6 @@ import { useForm } from "react-hook-form";
 import { auth } from "@/utils/firebase";
 import { userState } from "@/utils/state";
 import { MdClose } from "react-icons/md";
-import {
-  AiFillGoogleCircle,
-  AiFillTwitterCircle,
-  AiFillGithub,
-} from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitterSquare, FaGithubSquare } from "react-icons/fa";
 
