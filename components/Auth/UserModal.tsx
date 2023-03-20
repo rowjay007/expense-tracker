@@ -2,7 +2,7 @@ import LoginModal from "./LoginModal";
 import RegisterModal from "./RegisterModal";
 import { useRecoilState } from "recoil";
 import { userState } from "@/utils/state";
-
+ 
 export default function UserModal() {
   const [user, setUser] = useRecoilState(userState);
 
@@ -28,4 +28,3 @@ export default function UserModal() {
     </>
   );
 }
-  

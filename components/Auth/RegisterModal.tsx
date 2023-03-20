@@ -6,7 +6,6 @@ import { userState } from "@/utils/state";
 import { FaTimes } from "react-icons/fa";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-
 type RegisterFormValues = {
   email: string;
   password: string;
@@ -22,20 +21,19 @@ export default function RegisterModal() {
     formState: { errors },
   } = useForm<RegisterFormValues>();
 
- const handleRegister = async (data: RegisterFormValues) => {
-   try {
-     const { user } = await createUserWithEmailAndPassword(
-       auth,
-       data.email,
-       data.password
-     );
-     setUser(user);
-     setIsOpen(false);
-   } catch (error) {
-     console.error(error);
-   }
- };
-
+  const handleRegister = async (data: RegisterFormValues) => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      setUser(user);
+      setIsOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -55,7 +53,7 @@ export default function RegisterModal() {
             </div>
             <h2 className="text-xl font-bold mb-4">Register</h2>
             <form onSubmit={handleSubmit(handleRegister)}>
-              <div className="mb-4">
+              <div className="mb-4 text-left">
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
@@ -67,7 +65,7 @@ export default function RegisterModal() {
                   <span className="text-red-500">Email is required</span>
                 )}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 text-left">
                 <label htmlFor="password">Password</label>
                 <input
                   type="password"
@@ -79,7 +77,7 @@ export default function RegisterModal() {
                   <span className="text-red-500">Password is required</span>
                 )}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 text-left">
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <input
                   type="password"
