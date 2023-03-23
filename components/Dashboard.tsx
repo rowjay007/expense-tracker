@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useAuth } from "../AuthProvider";
 import LoginForm from "./LoginForm";
 import RegistrationForm from "./RegistrationForm";
@@ -28,6 +29,7 @@ const Dashboard = () => {
         <LoginForm />
         <h2>Register</h2>
         <RegistrationForm />
+        <Link href="/dashboard">Dashboard </Link>
       </div>
     );
   }

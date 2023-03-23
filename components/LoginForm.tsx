@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '@/auth/firebase';
+import { useRouter } from "next/navigation";
+import { auth } from "@/auth/firebase";
 
 const LoginForm = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-       e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-       try {
-         await signInWithEmailAndPassword(auth, email, password);
-       } catch (error) {
-         setError("Failed to sign in");
-       }
-     };
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/dashboard");
+    } catch (error) {
+      setError("Failed to sign in");
+    }
+  };
   return (
     <form onSubmit={handleSubmit}>
       <input
