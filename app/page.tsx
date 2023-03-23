@@ -1,9 +1,13 @@
-import React from 'react'
+"use client"
+import AuthProvider from "../AuthProvider";
+import Dashboard from "@/components/Dashboard";
 
 const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
+    <AuthProvider>
+      <Dashboard />
+    </AuthProvider>
+  );
+};
 
-export default Home
+export default Home;
