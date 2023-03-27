@@ -1,7 +1,9 @@
-"use client";
 import "./globals.css";
-
 import { RecoilRoot } from "recoil";
+import Layout from "../components/Layout";
+
+
+
 export interface AuthContextProps {
   children: React.ReactNode;
 }
@@ -19,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <RecoilRoot>{children}</RecoilRoot>
+        <RecoilRoot>
+          
+            <Layout>{children} </Layout>
+        </RecoilRoot>
       </body>
     </html>
   );

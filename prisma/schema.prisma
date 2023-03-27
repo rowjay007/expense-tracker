@@ -1,34 +1,39 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  tasks     Task[]
+generator client {
+  provider = "prisma-client-js"
 }
 
-model Task {
-  id          Int      @id @default(autoincrement())
-  description String
-  completed   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  expenses     Expense[]
 }
 
 model Expense {
-  id          Int      @id @default(autoincrement())
-  description String
+  id          String   @id @default(uuid())
+  title       String
+  description String?
   amount      Float
+  category    Category
   date        DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+enum Category {
+  FOOD
+  ENTERTAINMENT
+  TRAVEL
+  OTHER
 }
