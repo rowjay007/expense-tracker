@@ -1,41 +1,17 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { register } from '../api/auth';
+// pages/register.tsx
 
-const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const router = useRouter();
+import Head from "next/head";
+import RegisterModal from "../components/Auth/RegisterModal";
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    try {
-      await register(email, password);
-      router.push('/login');
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
-  };
-
+const RegisterPage = () => {
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email:
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <label>
-          Password:
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        {errorMessage && <p>{errorMessage}</p>}
-        <button type="submit">Register</button>
-      </form>
-    </div>
+    <>
+      <Head>
+        <title>Register | Expense Tracker</title>
+      </Head>
+      <RegisterModal />
+    </>
   );
 };
 
-export
+export default RegisterPage;

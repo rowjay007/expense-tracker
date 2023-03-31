@@ -1,37 +1,59 @@
-import React, { useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import RegisterForm from "./RegisterForm";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRecoilState } from "recoil";
+import { userState } from "../../utils/recoil";
+import { auth } from "../../utils/firebase";
+import { Input, Button, Spinner } from "../UI";
 
-const RegisterModal = ({ isOpen, onClose }) => {
+type RegisterFormValues = {
+  email: string;
+  password: string;
+};
+
+const RegisterModal = () => {
+  const [user, setUser] = useRecoilState(userState);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormValues>();
+
+  const handleRegister = async (data: RegisterFormValues) => {
+    setIsLoading(true);
+    try {
+      const { user: authUser } = await auth.createUserWithEmailAndPassword(
+        data.email,
+        data.password
+      );
+      setUser({ uid: authUser.uid, email: authUser.email });
+    } catch (error) {
+      console.error(error);
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <Transition show={isOpen} as={React.Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 z-50 overflow-y-auto"
-        onClose={onClose}
-      >
-        <div className="flex items-center justify-center min-h-screen">
-          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-
-          <div className="bg-white rounded-lg overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <Dialog.Title className="text-lg font-medium">
-                Register
-              </Dialog.Title>
-
-              <button onClick={onClose}>
-                <XIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="p-4">
-              <RegisterForm />
-            </div>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+    <div>
+      <h2>Register</h2>
+      <form onSubmit={handleSubmit(handleRegister)}>
+        <Input
+          label="Email"
+          type="email"
+          error={errors.email?.message}
+          {...register("email", { required: "Email is required" })}
+        />
+        <Input
+          label="Password"
+          type="password"
+          error={errors.password?.message}
+          {...register("password", { required: "Password is required" })}
+        />
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? <Spinner /> : "Register"}
+        </Button>
+      </form>
+    </div>
   );
 };
 
