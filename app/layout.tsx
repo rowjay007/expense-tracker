@@ -1,6 +1,6 @@
 import "./globals.css";
 import { RecoilRoot } from "recoil";
-import Layout from "../components/Layout";
+import Layout from "@/components/Layout/Layout";
 
 
 
@@ -22,8 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <RecoilRoot>
-          
-            <Layout>{children} </Layout>
+          <Layout>{children}</Layout>
         </RecoilRoot>
       </body>
     </html>
