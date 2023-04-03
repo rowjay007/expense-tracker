@@ -1,6 +1,6 @@
+"use client"
 import "./globals.css";
 import { RecoilRoot } from "recoil";
-import Layout from "@/components/Layout/Layout";
 
 
 
@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <RecoilRoot>
-          <Layout>{children}</Layout>
+        {children}
         </RecoilRoot>
       </body>
     </html>
