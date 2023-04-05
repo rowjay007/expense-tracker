@@ -1,6 +1,11 @@
 import { atom } from "recoil";
 
-export const userState = atom({
-  key: "userState",
+export const isLoggedInState = atom({
+  key: "isLoggedInState",
+  default: false,
+});
+
+export const currentUserState = atom({
+  key: "currentUserState",
   default: null,
 });
