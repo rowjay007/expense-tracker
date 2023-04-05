@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRecoilValue } from "recoil";
 import { userState } from "../utils/state";
 import { signOut } from "../utils/firebase";
-import AuthModal from "./AuthModal";
+import { AuthForm } from "./AuthForm";
 
 export default function Navbar() {
   const user = useRecoilValue(userState);
@@ -37,7 +37,7 @@ export default function Navbar() {
           </button>
         )}
       </div>
-      <AuthModal isOpen={isModalOpen} onClose={handleModalClose} />
+      <AuthForm isOpen={isModalOpen} onClose={handleModalClose} />
     </nav>
   );
 }

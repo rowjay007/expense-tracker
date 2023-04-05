@@ -1,51 +1,59 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { signInWithEmailAndPassword } from "../utils/firebase";
+import { useAuth } from "../hooks/useAuth";
+import { Button } from "./Button";
+import { Input } from "./Input";
+import { Modal } from "./Modal";
 
-type LoginFormProps = {
-  onSuccess: () => void;
-};
-
-type LoginFormValues = {
+type LoginFormInputs = {
   email: string;
   password: string;
 };
 
-export default function LoginForm({ onSuccess }: LoginFormProps) {
-  const { register, handleSubmit, formState } = useForm<LoginFormValues>();
-  const [error, setError] = useState<string | null>(null);
+type LoginFormProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-  const onSubmit = handleSubmit(async (values) => {
+export function LoginForm({ isOpen, onClose }: LoginFormProps) {
+  const { login } = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>();
+
+  const onSubmit = async ({ email, password }: LoginFormInputs) => {
     try {
-      await signInWithEmailAndPassword(values.email, values.password);
-      onSuccess();
-    } catch (e) {
-      setError(e.message);
+      await login(email, password);
+      onClose();
+    } catch (error) {
+      setErrorMessage(error.message);
     }
-  });
+  };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          id="email"
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <h2 className="text-xl font-bold mb-4">Login to Expense Tracker</h2>
+      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          label="Email"
           type="email"
-          {...register("email", { required: true })}
+          placeholder="Enter your email"
+          {...register("email", { required: "Email is required" })}
+          error={errors.email?.message}
         />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          id="password"
+        <Input
+          label="Password"
           type="password"
-          {...register("password", { required: true })}
+          placeholder="Enter your password"
+          {...register("password", { required: "Password is required" })}
+          error={errors.password?.message}
         />
-      </div>
-      {error && <div className="text-red-500">{error}</div>}
-      <button type="submit" disabled={formState.isSubmitting}>
-        Login
-      </button>
-    </form>
+        <Button type="submit">Login</Button>
+      </form>
+    </Modal>
   );
 }
