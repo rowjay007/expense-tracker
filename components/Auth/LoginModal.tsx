@@ -6,6 +6,9 @@ import { userState } from "@/utils/state";
 import { MdClose } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitterSquare, FaGithubSquare } from "react-icons/fa";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+
 
 type LoginFormValues = {
   email: string;
@@ -20,15 +23,19 @@ export default function LoginModal() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>();
+    const router = useRouter();
 
   const handleLogin = async (data: LoginFormValues) => {
     try {
-      const { user } = await auth.signInWithEmailAndPassword(
-        data.email,
-        data.password
-      );
+     
+       const { user } = await signInWithEmailAndPassword(
+         auth,
+         data.email,
+         data.password
+       );
       setUser(user);
       setIsOpen(false);
+      router.push("/dashboard");
     } catch (error) {
       console.error(error);
     }

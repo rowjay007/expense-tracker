@@ -5,6 +5,7 @@ import { auth } from "@/utils/firebase";
 import { userState } from "@/utils/state";
 import { FaTimes } from "react-icons/fa";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 
 type RegisterFormValues = {
@@ -21,6 +22,7 @@ export default function RegisterModal() {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormValues>();
+    const router = useRouter();
 
  const handleRegister = async (data: RegisterFormValues) => {
    try {
@@ -31,6 +33,7 @@ export default function RegisterModal() {
      );
      setUser(user);
      setIsOpen(false);
+     router.push("/dashboard");
    } catch (error) {
      console.error(error);
    }
