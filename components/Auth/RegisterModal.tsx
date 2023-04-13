@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
 import { auth } from "@/utils/firebase";
-import { userState } from "@/utils/state";
+import { userState } from "@/utils/atoms";
 import { FaTimes } from "react-icons/fa";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import zxcvbn from "zxcvbn";
 
 
 type RegisterFormValues = {
@@ -16,6 +17,7 @@ type RegisterFormValues = {
 
 export default function RegisterModal() {
   const [user, setUser] = useRecoilState(userState);
+  const [passwordScore, setPasswordScore] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
@@ -39,7 +41,7 @@ export default function RegisterModal() {
    }
  };
 
-
+  
   return (
     <>
       <button
@@ -77,11 +79,37 @@ export default function RegisterModal() {
                   id="password"
                   {...register("password", { required: true })}
                   className="border border-gray-400 rounded-lg p-2 w-full"
+                  onChange={(e) => {
+                    const score = zxcvbn(e.target.value).score;
+                    setPasswordScore(score);
+                  }}
                 />
                 {errors.password && (
                   <span className="text-red-500">Password is required</span>
                 )}
+                {passwordScore > 0 && (
+                  <div className="mt-2">
+                    <div
+                      className={`h-2 rounded-sm ${
+                        passwordScore < 2
+                          ? "bg-red-500"
+                          : passwordScore < 3
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
+                      }`}
+                      style={{ width: `${(passwordScore / 4) * 100}%` }}
+                    ></div>
+                    <div className="text-sm font-medium text-gray-500 mt-1">
+                      {passwordScore < 2
+                        ? "Weak"
+                        : passwordScore < 3
+                        ? "Fair"
+                        : "Strong"}
+                    </div>
+                  </div>
+                )}
               </div>
+
               <div className="mb-4">
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <input

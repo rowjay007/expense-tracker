@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
 import { auth } from "@/utils/firebase";
-import { userState } from "@/utils/state";
+import { userState } from "@/utils/atoms";
 import { MdClose } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaTwitterSquare, FaGithubSquare } from "react-icons/fa";
