@@ -8,7 +8,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import zxcvbn from "zxcvbn";
 
-
 type RegisterFormValues = {
   email: string;
   password: string;
@@ -22,26 +21,39 @@ export default function RegisterModal() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid }, // Update to destructure isValid from formState
+    watch,
   } = useForm<RegisterFormValues>();
-    const router = useRouter();
+  const router = useRouter();
+  const password = watch("password"); // Watch the "password" field value
 
- const handleRegister = async (data: RegisterFormValues) => {
-   try {
-     const { user } = await createUserWithEmailAndPassword(
-       auth,
-       data.email,
-       data.password
-     );
-     setUser(user);
-     setIsOpen(false);
-     router.push("/dashboard");
-   } catch (error) {
-     console.error(error);
-   }
- };
+  const handleRegister = async (data: RegisterFormValues) => {
+    try {
+      if (!isValid) {
+        // Update to use isValid from formState
+        console.error("Form is not valid");
+        return;
+      }
 
-  
+      if (data.password !== data.confirmPassword) {
+        // Password and confirm password do not match, display error message
+        console.error("Passwords do not match");
+        return;
+      }
+
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      setUser(user);
+      setIsOpen(false);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <button
@@ -115,12 +127,17 @@ export default function RegisterModal() {
                 <input
                   type="password"
                   id="confirmPassword"
-                  {...register("confirmPassword", { required: true })}
+                  {...register("confirmPassword", {
+                    required: "Confirm Password is required", // Set custom error message
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  })}
                   className="border border-gray-400 rounded-lg p-2 w-full"
                 />
                 {errors.confirmPassword && (
                   <span className="text-red-500">
-                    Confirm Password is required
+                    {errors.confirmPassword.message}{" "}
+                    {/* Display custom error message */}
                   </span>
                 )}
               </div>
