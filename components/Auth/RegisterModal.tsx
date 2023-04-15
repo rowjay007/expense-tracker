@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
 import { auth } from "@/utils/firebase";
 import { userState } from "@/utils/atoms";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaSpinner } from "react-icons/fa";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import zxcvbn from "zxcvbn";
@@ -17,6 +17,7 @@ type RegisterFormValues = {
 export default function RegisterModal() {
   const [user, setUser] = useRecoilState(userState);
   const [passwordScore, setPasswordScore] = useState(0);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
@@ -40,6 +41,7 @@ export default function RegisterModal() {
         console.error("Passwords do not match");
         return;
       }
+      setIsRegistering(true);
 
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -51,6 +53,9 @@ export default function RegisterModal() {
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
+       } finally {
+      setIsRegistering(false); // Set isRegistering to false when registration process is complete
+    
     }
   };
 
@@ -144,8 +149,17 @@ export default function RegisterModal() {
               <button
                 type="submit"
                 className="bg-blue-500 text-white rounded-lg px-4 py-2"
+                disabled={isRegistering}
               >
-                Register
+                {isRegistering ? (
+                  // Render the spinning icon while registering
+                  <div className="flex items-center">
+                    <FaSpinner className="animate-spin mr-2" />
+                    
+                  </div>
+                ) : (
+                  "Register"
+                )}
               </button>
             </form>
           </div>
