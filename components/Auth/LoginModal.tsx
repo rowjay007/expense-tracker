@@ -6,6 +6,8 @@ import { auth } from "@/utils/firebase";
 import { userState } from "@/utils/atoms";
 import { MdClose } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
+import { FaSpinner } from "react-icons/fa";
+
 import { FaTwitterSquare, FaGithubSquare } from "react-icons/fa";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -19,6 +21,7 @@ type LoginFormValues = {
 export default function LoginModal() {
   const [user, setUser] = useRecoilState(userState);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
   const {
     register,
     handleSubmit,
@@ -28,17 +31,19 @@ export default function LoginModal() {
 
   const handleLogin = async (data: LoginFormValues) => {
     try {
-     
-       const { user } = await signInWithEmailAndPassword(
-         auth,
-         data.email,
-         data.password
-       );
+      setIsLoading(true);
+      const { user } = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
       setUser(user);
       setIsOpen(false);
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false); // set loading state back to false
     }
   };
 
@@ -121,10 +126,15 @@ export default function LoginModal() {
                 </a>
               </div>
               <button
-                type="submit"
-                className="w-full mt-4 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md"
+                onClick={() => setIsOpen(true)}
+                disabled={isLoading} // disable button while loading
               >
-                Sign in
+                {isLoading ? (
+                  <FaSpinner className="animate-spin mr-2" />
+                ) : (
+                  "Login"
+                )}
               </button>
               <div className="flex items-center pt-4 space-x-1">
                 <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
