@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
 import { auth } from "@/utils/firebase";
@@ -19,45 +19,56 @@ export default function RegisterModal() {
   const [passwordScore, setPasswordScore] = useState(0);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid }, // Update to destructure isValid from formState
+    formState: { errors, isValid },
     watch,
   } = useForm<RegisterFormValues>();
   const router = useRouter();
-  const password = watch("password"); // Watch the "password" field value
+  const password = watch("password");
 
-  const handleRegister = async (data: RegisterFormValues) => {
-    try {
-      if (!isValid) {
-        // Update to use isValid from formState
-        console.error("Form is not valid");
-        return;
-      }
-
-      if (data.password !== data.confirmPassword) {
-        // Password and confirm password do not match, display error message
-        console.error("Passwords do not match");
-        return;
-      }
-      setIsRegistering(true);
-
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-      setUser(user);
-      setIsOpen(false);
-      router.push("/dashboard");
-    } catch (error) {
-      console.error(error);
-       } finally {
-      setIsRegistering(false); // Set isRegistering to false when registration process is complete
-    
+  useEffect(() => {
+    if (emailError) {
+      // Scroll to the email input field if there is an email error
+      document.getElementById("email")?.scrollIntoView();
     }
-  };
+  }, [emailError]);
+
+const handleRegister = async (data: RegisterFormValues) => {
+  try {
+    if (!isValid) {
+      console.error("Form is not valid");
+      return;
+    }
+
+    if (data.password !== data.confirmPassword) {
+      console.error("Passwords do not match");
+      return;
+    }
+    setIsRegistering(true);
+
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password
+    );
+    setUser(user);
+    setIsOpen(false);
+    router.push("/dashboard");
+  } catch (error) {
+    console.error(error);
+    if (error.code === "auth/email-already-in-use") {
+      setEmailError("This email has already been used.");
+    } else {
+      setEmailError(error.message);
+    }
+  } finally {
+    setIsRegistering(false);
+  }
+};
+
 
   return (
     <>
@@ -78,15 +89,23 @@ export default function RegisterModal() {
             <h2 className="text-xl font-bold mb-4">Register</h2>
             <form onSubmit={handleSubmit(handleRegister)}>
               <div className="mb-4">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email" >Email</label>
                 <input
                   type="email"
                   id="email"
                   {...register("email", { required: true })}
+                  value={watch("email")}
+                  onChange={(e) => {
+                    setEmailError("");
+                    register("email").onChange(e);
+                  }}
                   className="border border-gray-400 rounded-lg p-2 w-full"
                 />
                 {errors.email && (
                   <span className="text-red-500">Email is required</span>
+                )}
+                {emailError && (
+                  <span className="text-red-500">{emailError}</span>
                 )}
               </div>
               <div className="mb-4">
@@ -155,7 +174,6 @@ export default function RegisterModal() {
                   // Render the spinning icon while registering
                   <div className="flex items-center">
                     <FaSpinner className="animate-spin mr-2" />
-                    
                   </div>
                 ) : (
                   "Register"
