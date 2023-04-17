@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
@@ -10,6 +11,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import zxcvbn from "zxcvbn";
 import Link from "next/link";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type RegisterFormValues = {
   email: string;
@@ -18,20 +21,39 @@ type RegisterFormValues = {
   terms: boolean;
 };
 
+const schema = yup.object().shape({
+  email: yup.string().email("Invalid email").required("Email is required"),
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), undefined], "Passwords must match")
+    .required("Confirm Password is required"),
+  terms: yup.bool().oneOf([true], "You must accept the terms and conditions"),
+});
+
 export default function RegisterModal() {
   const [user, setUser] = useRecoilState(userState);
   const [passwordScore, setPasswordScore] = useState(0);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [emailError, setEmailError] = useState("");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-    watch,
-  } = useForm<RegisterFormValues>();
-  const router = useRouter();
-  const password = watch("password");
+ const {
+   register,
+   handleSubmit,
+   formState: { errors, isValid },
+   watch,
+ } = useForm<RegisterFormValues>({
+   resolver: yupResolver(schema), // use yupResolver to validate the form data
+   defaultValues: {
+     email: "",
+     password: "",
+     confirmPassword: "",
+     terms: false,
+   },
+ });
 
   useEffect(() => {
     if (emailError) {

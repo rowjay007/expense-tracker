@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { signOut } from "@/utils/firebase";
+import { auth } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
@@ -8,7 +8,7 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      await auth.signOut(); // Use auth.signOut instead of signOut
       router.push("/");
     } catch (error) {
       console.error(error);

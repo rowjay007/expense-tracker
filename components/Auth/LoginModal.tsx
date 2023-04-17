@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { useForm } from "react-hook-form";
@@ -7,11 +7,11 @@ import { userState } from "@/utils/atoms";
 import { MdClose } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaSpinner } from "react-icons/fa";
-
 import { FaTwitterSquare, FaGithubSquare } from "react-icons/fa";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type LoginFormValues = {
   email: string;
@@ -22,13 +22,22 @@ type LoginFormValues = {
 export default function LoginModal() {
   const [user, setUser] = useRecoilState(userState);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>();
-    const router = useRouter();
+  } = useForm<LoginFormValues>({
+    resolver: yupResolver(
+      yup.object({
+        email: yup.string().email().required(),
+        password: yup.string().required(),
+        remember: yup.boolean(),
+      })
+    ),
+    mode: "onBlur",
+  });
+  const router = useRouter();
 
   const handleLogin = async (data: LoginFormValues) => {
     try {
